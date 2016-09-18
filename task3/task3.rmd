@@ -1,0 +1,29 @@
+---
+title: "task3"
+author: "zagnyte"
+date: "15 September 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(oce)
+```
+
+## Oce package
+
+Oce package supports the analysis of Oceanographic data. The code below demonstrates one of [oce](https://cran.cnr.berkeley.edu/web/packages/oce/oce.pdf) package's abilities. Graphs show sea-level in Tuktoyaktuk, Canada.
+
+## Sea-level
+
+```{r Tuktoyaktuk}
+data("sealevelTuktoyaktuk")
+m <- tidem(sealevelTuktoyaktuk)
+par(mfrow=c(2,1))
+plot(sealevelTuktoyaktuk, which=1)
+plot(m)
+
+```
+
+
+
+
