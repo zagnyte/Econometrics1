@@ -13,29 +13,17 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Nuskaitome duomenu lentele ir sutikriname duomenu tipus:
 
-```{r echo=FALSE}
+```{r echo=TRUE}
 library(knitr)
+
 ```
 
 ```{r include=TRUE}
-x=read.csv('C:/Users/agne/Desktop/data.csv', stringsAsFactors=FALSE)
+x=read.csv('data.csv', stringsAsFactors=FALSE)
 ```
 
-```{r echo=FALSE}
-class(x[,1])
-class(x[,2])
-class(x[,3])
-class(x[,4])
-class(x[,5])
-class(x[,6])
-class(x[,7])
-class(x[,8])
-class(x[,9])
-class(x[,10])
-class(x[,11])
-class(x[,12])
-class(x[,13])
-class(x[,14])
+```{r echo=TRUE}
+sapply(x, class)
 ```
 
 kadangi sestas ir tryliktas stulpeliai nuskaitomi ne kaip datos, keiciame ju tipa:
@@ -49,20 +37,25 @@ x$sysTime <- as.POSIXlt(x$sysTime,"%Y-%m-%d %H:%M:%S", tz="GMT")
 
 Perziurime uzduotis dariusius vartotojus ir kiek klausimu kiekvienas ju atliko:
 
-```{r echo=FALSE}
+```{r echo=TRUE}
 table(x$user)
 ```
 
 Pastebime, kad yra vartotoju sukelusiu itarima. Matome, kad "1vbutkus", "aaa", "testas" nera studentai. Taip pat pastebime studente "Juste", kuri naudojo skirtingus vardus (Juste, juste, j, ju). Justes duomenis paliekame, testavimo duomenis istriname:
 
 ```{r echo=TRUE}
-m=x[!(x$user=="1vbutkus" | x$user=="aaa" | x$user=="testas"),]
+c=x$user %in% c("1vbutkus", "aaa", "testas")
+m=x[!c,]
 ```
 
-Patikriname duomenis del dubliavimosi:
+Patikriname duomenis del dubliavimosi ir isimame besidubliuojancius duomenis:
 
 ```{r echo=TRUE}
-table(duplicated(x))
+a=data.frame(m$user, m$lesson_name, m$attempt, m$question_number, m$correct, m$skipped)
+table(duplicated(a))
+m=m[!duplicated(a),]
+a=data.frame(m$user, m$lesson_name, m$attempt, m$question_number, m$correct, m$skipped)
+table(duplicated(a))
 ```
 
 ## Pilnai atlike swirl uzduotis
@@ -70,21 +63,24 @@ table(duplicated(x))
 Studentas yra pilnai atlikes visas swirl uzduotis, jei pilnai atliktos visos 16 uzduociu nepraleidziant jokiu klausimu.
 Pirmiausia identifikuosime studentus, kurie praleido nors vena klausima ir matome kiek kuris klausimu praleido:
 
-```{r echo=FALSE}
+```{r echo=TRUE}
 table(m[m$skipped==TRUE,7])
 ```
 
 Isvalome duomenu lentele nuo nors viena klausima praleidusiu studentu:
 
-```{r echo=FALSE}
-table(m[!( m$user=="Dariukxas" | m$user=="Domante Bulovaite" | m$user=="Greta" | m$user=="gretajes" | m$user=="gyse3054" | m$user=="juste" | m$user=="Juste" | m$user=="Karolina" | m$user=="kestous" | m$user=="ogadova" | m$user=="ojautakaite" | m$user=="Raigardas" | m$user=="rokasaleks" |  m$user=="SandraKozlovskaja" | m$user=="simonalevickaite" | m$user=="sindeivydas" | m$user=="j" | m$user=="ju"),7])
+```{r echo=TRUE}
+c=m$user %in% c("Dariukxas", "Domante Bulovaite", "Greta", "gretajes", "gyse3054", "juste", "Juste", "Karolina", "kestous", "ogadova", "ojautakaite",  "Raigardas", "rokasaleks", "SandraKozlovskaja", "simonalevickaite", "sindeivydas", "j" , "ju")
+table(m[!(c),7])
 ```
 
 Is karto galime atmesti:Danielius, Dominykas, gyse, rokasalek. Pagal atsakytu klausimu skaiciu matosi, kad visos uzduotis nera atliktos.
 Sudarome duomenu lentele is likusiu paieskoje studentu (aipe00, edba2903, emru3000, MildaPie, simona333, zagnyte378)
 
-```{r echo=FALSE}
-n=m[(m$user=="aipe00" | m$user=="edba2903" | m$user=="emru3000" | m$user=="MildaPie" | m$user=="simona1234" | m$user=="zagnyte"),]
+```{r echo=TRUE}
+c=m$user %in% c("aipe00", "edba2903", "emru3000", "MildaPie", "simona1234", "zagnyte" )
+n=m[c,]
+
 ```
 
 Sudarome lentele is vardu ir pamoku ir isimame besidubliuojancius duomenis, tad kad veliau galetume patikrinti ar visas pamokas atliko paieskoje like studentai.
@@ -96,7 +92,7 @@ Sudarome lentele is vardu ir pamoku ir isimame besidubliuojancius duomenis, tad 
 
 Patikriname ar visi paieskoje like studentai padare po 16 pamoku:
 
-```{r echo=FALSE}
+```{r echo=TRUE}
     table(d2[,1])
 ```
 
@@ -106,13 +102,13 @@ Gauname, kad pilnai uzduotis atliko sie studentai:  aipe00, emru3000, simona1234
 
 Sudarome studentu lentele, kurie nera padare visu uzduociu arba praleido nors viena klausima.
 
-```{r echo=FALSE}
+```{r echo=TRUE}
 sk=m[!(m$user=="aipe00" | m$user=="emru3000" | m$user=="simona1234" | m$user=="zagnyte"),]
 ```
 
 Patikriname kiek kuris studentas atliko pamoku:
 
-```{r echo=FALSE}
+```{r echo=TRUE}
 sk1=data.frame(sk$user, sk$lesson_name)
 sk2=sk1[!duplicated(sk1), ]
 table(sk2[,1])
@@ -120,7 +116,7 @@ table(sk2[,1])
 
 Patikriname kiek kuris studentas praleido klausimu:
 
-```{r echo=FALSE}
+```{r echo=TRUE}
 table(sk[sk$skipped==TRUE,7])
 ```
 
@@ -132,14 +128,15 @@ Sudarome visu studentu duomenu lentele is triju stulpeliu (user, takeTime, lesso
 t1=data.frame(m$user, m$takeTime, m$lesson_name)
 t2=t1[!duplicated(t1),]
 t3=t2[order(t2$m.lesson_name),]
-kable(t3[1:30,], caption="Lenteleleje pateikti pirmi 30 duomenu")
+kable(t3[1:15,], caption="Lenteleleje pateikti pirmi 15 duomenu")
 ```
 
 Kiek vidutiniskai laiko uztrunka atlikti kiekviena pamoka?
 
-```{r echo=FALSE}
+```{r echo=TRUE}
 pamoka=unique(t3$m.lesson_name)
   laikas= c(mean(t3[t3$m.lesson_name=="Base Graphics",2]), mean(t3[t3$m.lesson_name=="Basic Building Blocks",2]), mean(t3[t3$m.lesson_name=="Dates and Times",2]), mean(t3[t3$m.lesson_name=="Dummy Lesson",2]), mean(t3[t3$m.lesson_name=="Functions",2]), mean(t3[t3$m.lesson_name=="lapply and sapply",2]), mean(t3[t3$m.lesson_name=="Logic",2]), mean(t3[t3$m.lesson_name=="Looking at Data",2]), mean(t3[t3$m.lesson_name=="Matrices and Data Frames",2]), mean(t3[t3$m.lesson_name=="Missing Values",2]), mean(t3[t3$m.lesson_name=="Sequences of Numbers",2]), mean(t3[t3$m.lesson_name=="Simulation",2]), mean(t3[t3$m.lesson_name=="Subsetting Vectors",2]), mean(t3[t3$m.lesson_name=="vapply and tapply",2]), mean(t3[t3$m.lesson_name=="Vectors",2]), mean(t3[t3$m.lesson_name=="Workspace and Files",2]))
+
 ```
 ```{r echo=TRUE}
 l=data.frame(pamoka, laikas)
@@ -188,18 +185,20 @@ mano=m[ind, c(3, 9, 13)]
 Tam, kad suskaiciuociau kiek laiko buvo atlikinejama kiekviena uzduotis paleidziu cikla, kuris is paskutinio klausimo atsakymo laiko atima pirmutinio uzduoties klausimo atsakymo laika ir gautas reiksmes is kart surasineja i vektoriu w.
 
 ```{r echo=TRUE}
- x=1
+    x=1
     y=2
     w=NULL
     w1=0
     while(y<379){
       if((mano[x,2]==mano[y,2]) & (y!=378)){
         y=y+1}
-      else {w1=as.numeric(difftime(mano[y-1,3], mano[x,3], units="min"))
+      else {
+        w1=as.numeric(difftime(mano[y-1,3], mano[x,3], units="min"))
         w=c(w, w1)            
         x=y
         y=y+1
-        print(w1)}}
+        print(w1)}
+      }
 ```
 
 Sudarome lentele, kurioje be kartojimusi bus surasytos pamokos ir vartotojo deklaruoti laikai.

@@ -126,21 +126,17 @@ $(document).ready(function () {
 <div id="swirl-uzduociu-atsakymu-analize" class="section level2">
 <h2>Swirl uzduociu atsakymu analize</h2>
 <p>Nuskaitome duomenu lentele ir sutikriname duomenu tipus:</p>
-<pre class="r"><code>x=read.csv('C:/Users/agne/Desktop/data.csv', stringsAsFactors=FALSE)</code></pre>
-<pre><code>## [1] &quot;integer&quot;</code></pre>
-<pre><code>## [1] &quot;character&quot;</code></pre>
-<pre><code>## [1] &quot;integer&quot;</code></pre>
-<pre><code>## [1] &quot;character&quot;</code></pre>
-<pre><code>## [1] &quot;character&quot;</code></pre>
-<pre><code>## [1] &quot;character&quot;</code></pre>
-<pre><code>## [1] &quot;character&quot;</code></pre>
-<pre><code>## [1] &quot;character&quot;</code></pre>
-<pre><code>## [1] &quot;character&quot;</code></pre>
-<pre><code>## [1] &quot;integer&quot;</code></pre>
-<pre><code>## [1] &quot;logical&quot;</code></pre>
-<pre><code>## [1] &quot;integer&quot;</code></pre>
-<pre><code>## [1] &quot;character&quot;</code></pre>
-<pre><code>## [1] &quot;logical&quot;</code></pre>
+<pre class="r"><code>library(knitr)</code></pre>
+<pre class="r"><code>x=read.csv('data.csv', stringsAsFactors=FALSE)</code></pre>
+<pre class="r"><code>sapply(x, class)</code></pre>
+<pre><code>##               X            name        takeTime         sysUser 
+##       &quot;integer&quot;     &quot;character&quot;       &quot;integer&quot;     &quot;character&quot; 
+##         sysName         sysTime            user     course_name 
+##     &quot;character&quot;     &quot;character&quot;     &quot;character&quot;     &quot;character&quot; 
+##     lesson_name question_number         correct         attempt 
+##     &quot;character&quot;       &quot;integer&quot;       &quot;logical&quot;       &quot;integer&quot; 
+##        datetime         skipped 
+##     &quot;character&quot;       &quot;logical&quot;</code></pre>
 <p>kadangi sestas ir tryliktas stulpeliai nuskaitomi ne kaip datos, keiciame ju tipa:</p>
 <pre class="r"><code>x$datetime &lt;- as.POSIXlt(x$datetime,&quot;%Y-%m-%d %H:%M:%S&quot;, tz=&quot;GMT&quot;)
 x$sysTime &lt;- as.POSIXlt(x$sysTime,&quot;%Y-%m-%d %H:%M:%S&quot;, tz=&quot;GMT&quot;)</code></pre>
@@ -148,6 +144,7 @@ x$sysTime &lt;- as.POSIXlt(x$sysTime,&quot;%Y-%m-%d %H:%M:%S&quot;, tz=&quot;GMT
 <div id="duommenu-lenteles-isrusiavimas" class="section level2">
 <h2>Duommenu lenteles isrusiavimas</h2>
 <p>Perziurime uzduotis dariusius vartotojus ir kiek klausimu kiekvienas ju atliko:</p>
+<pre class="r"><code>table(x$user)</code></pre>
 <pre><code>## 
 ##          1vbutkus               aaa            aipe00         Danielius 
 ##                 3                 8               344                 3 
@@ -166,36 +163,50 @@ x$sysTime &lt;- as.POSIXlt(x$sysTime,&quot;%Y-%m-%d %H:%M:%S&quot;, tz=&quot;GMT
 ##       sindeivydas            testas           zagnyte 
 ##               419                 6               378</code></pre>
 <p>Pastebime, kad yra vartotoju sukelusiu itarima. Matome, kad “1vbutkus”, “aaa”, “testas” nera studentai. Taip pat pastebime studente “Juste”, kuri naudojo skirtingus vardus (Juste, juste, j, ju). Justes duomenis paliekame, testavimo duomenis istriname:</p>
-<pre class="r"><code>m=x[!(x$user==&quot;1vbutkus&quot; | x$user==&quot;aaa&quot; | x$user==&quot;testas&quot;),]</code></pre>
-<p>Patikriname duomenis del dubliavimosi:</p>
-<pre class="r"><code>table(duplicated(x))</code></pre>
+<pre class="r"><code>c=x$user %in% c(&quot;1vbutkus&quot;, &quot;aaa&quot;, &quot;testas&quot;)
+m=x[!c,]</code></pre>
+<p>Patikriname duomenis del dubliavimosi ir isimame besidubliuojancius duomenis:</p>
+<pre class="r"><code>a=data.frame(m$user, m$lesson_name, m$attempt, m$question_number, m$correct, m$skipped)
+table(duplicated(a))</code></pre>
+<pre><code>## 
+## FALSE  TRUE 
+##  7747   158</code></pre>
+<pre class="r"><code>m=m[!duplicated(a),]
+a=data.frame(m$user, m$lesson_name, m$attempt, m$question_number, m$correct, m$skipped)
+table(duplicated(a))</code></pre>
 <pre><code>## 
 ## FALSE 
-##  7922</code></pre>
+##  7747</code></pre>
 </div>
 <div id="pilnai-atlike-swirl-uzduotis" class="section level2">
 <h2>Pilnai atlike swirl uzduotis</h2>
 <p>Studentas yra pilnai atlikes visas swirl uzduotis, jei pilnai atliktos visos 16 uzduociu nepraleidziant jokiu klausimu. Pirmiausia identifikuosime studentus, kurie praleido nors vena klausima ir matome kiek kuris klausimu praleido:</p>
+<pre class="r"><code>table(m[m$skipped==TRUE,7])</code></pre>
 <pre><code>## 
 ##         Dariukxas Domante Bulovaite             Greta          gretajes 
-##                30                11                24                 2 
+##                30                11                24                 1 
 ##          gyse3054                ju             juste          Karolina 
 ##                96                 1                 1                76 
 ##           kestous           ogadova       ojautakaite         Raigardas 
-##               300               153                 8                 9 
+##               269               131                 8                 9 
 ##        rokasaleks SandraKozlovskaja  simonalevickaite       sindeivydas 
 ##               114                16                 5                18</code></pre>
 <p>Isvalome duomenu lentele nuo nors viena klausima praleidusiu studentu:</p>
+<pre class="r"><code>c=m$user %in% c(&quot;Dariukxas&quot;, &quot;Domante Bulovaite&quot;, &quot;Greta&quot;, &quot;gretajes&quot;, &quot;gyse3054&quot;, &quot;juste&quot;, &quot;Juste&quot;, &quot;Karolina&quot;, &quot;kestous&quot;, &quot;ogadova&quot;, &quot;ojautakaite&quot;,  &quot;Raigardas&quot;, &quot;rokasaleks&quot;, &quot;SandraKozlovskaja&quot;, &quot;simonalevickaite&quot;, &quot;sindeivydas&quot;, &quot;j&quot; , &quot;ju&quot;)
+table(m[!(c),7])</code></pre>
 <pre><code>## 
 ##     aipe00  Danielius  Dominykas   edba2903   emru3000       gyse 
-##        344          3          2        280        413         26 
+##        344          3          2        280        413         24 
 ##   MildaPie  rokasalek simona1234    zagnyte 
 ##        346          2        333        378</code></pre>
 <p>Is karto galime atmesti:Danielius, Dominykas, gyse, rokasalek. Pagal atsakytu klausimu skaiciu matosi, kad visos uzduotis nera atliktos. Sudarome duomenu lentele is likusiu paieskoje studentu (aipe00, edba2903, emru3000, MildaPie, simona333, zagnyte378)</p>
+<pre class="r"><code>c=m$user %in% c(&quot;aipe00&quot;, &quot;edba2903&quot;, &quot;emru3000&quot;, &quot;MildaPie&quot;, &quot;simona1234&quot;, &quot;zagnyte&quot; )
+n=m[c,]</code></pre>
 <p>Sudarome lentele is vardu ir pamoku ir isimame besidubliuojancius duomenis, tad kad veliau galetume patikrinti ar visas pamokas atliko paieskoje like studentai.</p>
 <pre class="r"><code> d=data.frame(n$user, n$lesson_name)
  d2=d[!duplicated(d), ]</code></pre>
 <p>Patikriname ar visi paieskoje like studentai padare po 16 pamoku:</p>
+<pre class="r"><code>    table(d2[,1])</code></pre>
 <pre><code>## 
 ##     aipe00   edba2903   emru3000   MildaPie simona1234    zagnyte 
 ##         16         11         16         15         16         16</code></pre>
@@ -204,7 +215,11 @@ x$sysTime &lt;- as.POSIXlt(x$sysTime,&quot;%Y-%m-%d %H:%M:%S&quot;, tz=&quot;GMT
 <div id="ne-pilnai-atlike-swirl-uzduotis" class="section level2">
 <h2>Ne pilnai atlike swirl uzduotis</h2>
 <p>Sudarome studentu lentele, kurie nera padare visu uzduociu arba praleido nors viena klausima.</p>
+<pre class="r"><code>sk=m[!(m$user==&quot;aipe00&quot; | m$user==&quot;emru3000&quot; | m$user==&quot;simona1234&quot; | m$user==&quot;zagnyte&quot;),]</code></pre>
 <p>Patikriname kiek kuris studentas atliko pamoku:</p>
+<pre class="r"><code>sk1=data.frame(sk$user, sk$lesson_name)
+sk2=sk1[!duplicated(sk1), ]
+table(sk2[,1])</code></pre>
 <pre><code>## 
 ##         Danielius         Dariukxas Domante Bulovaite         Dominykas 
 ##                 1                16                16                 1 
@@ -219,13 +234,14 @@ x$sysTime &lt;- as.POSIXlt(x$sysTime,&quot;%Y-%m-%d %H:%M:%S&quot;, tz=&quot;GMT
 ##        rokasaleks SandraKozlovskaja  simonalevickaite       sindeivydas 
 ##                15                16                15                16</code></pre>
 <p>Patikriname kiek kuris studentas praleido klausimu:</p>
+<pre class="r"><code>table(sk[sk$skipped==TRUE,7])</code></pre>
 <pre><code>## 
 ##         Dariukxas Domante Bulovaite             Greta          gretajes 
-##                30                11                24                 2 
+##                30                11                24                 1 
 ##          gyse3054                ju             juste          Karolina 
 ##                96                 1                 1                76 
 ##           kestous           ogadova       ojautakaite         Raigardas 
-##               300               153                 8                 9 
+##               269               131                 8                 9 
 ##        rokasaleks SandraKozlovskaja  simonalevickaite       sindeivydas 
 ##               114                16                 5                18</code></pre>
 </div>
@@ -235,9 +251,9 @@ x$sysTime &lt;- as.POSIXlt(x$sysTime,&quot;%Y-%m-%d %H:%M:%S&quot;, tz=&quot;GMT
 <pre class="r"><code>t1=data.frame(m$user, m$takeTime, m$lesson_name)
 t2=t1[!duplicated(t1),]
 t3=t2[order(t2$m.lesson_name),]
-kable(t3[1:30,], caption=&quot;Lenteleleje pateikti pirmi 30 duomenu&quot;)</code></pre>
+kable(t3[1:15,], caption=&quot;Lenteleleje pateikti pirmi 15 duomenu&quot;)</code></pre>
 <table>
-<caption>Lenteleleje pateikti pirmi 30 duomenu</caption>
+<caption>Lenteleleje pateikti pirmi 15 duomenu</caption>
 <thead>
 <tr class="header">
 <th align="left"></th>
@@ -248,188 +264,100 @@ kable(t3[1:30,], caption=&quot;Lenteleleje pateikti pirmi 30 duomenu&quot;)</cod
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">1225</td>
+<td align="left">1195</td>
 <td align="left">emru3000</td>
 <td align="right">10</td>
 <td align="left">Base Graphics</td>
 </tr>
 <tr class="even">
-<td align="left">1592</td>
+<td align="left">1562</td>
 <td align="left">zagnyte</td>
 <td align="right">20</td>
 <td align="left">Base Graphics</td>
 </tr>
 <tr class="odd">
-<td align="left">3462</td>
+<td align="left">3432</td>
 <td align="left">simona1234</td>
 <td align="right">13</td>
 <td align="left">Base Graphics</td>
 </tr>
 <tr class="even">
-<td align="left">3691</td>
+<td align="left">3661</td>
 <td align="left">Karolina</td>
 <td align="right">20</td>
 <td align="left">Base Graphics</td>
 </tr>
 <tr class="odd">
-<td align="left">4390</td>
+<td align="left">4358</td>
 <td align="left">Domante Bulovaite</td>
 <td align="right">15</td>
 <td align="left">Base Graphics</td>
 </tr>
 <tr class="even">
-<td align="left">4697</td>
+<td align="left">4665</td>
 <td align="left">edba2903</td>
 <td align="right">15</td>
 <td align="left">Base Graphics</td>
 </tr>
 <tr class="odd">
-<td align="left">5205</td>
+<td align="left">5135</td>
 <td align="left">kestous</td>
 <td align="right">25</td>
 <td align="left">Base Graphics</td>
 </tr>
 <tr class="even">
-<td align="left">5516</td>
+<td align="left">5423</td>
 <td align="left">ogadova</td>
 <td align="right">30</td>
 <td align="left">Base Graphics</td>
 </tr>
 <tr class="odd">
-<td align="left">5780</td>
+<td align="left">5687</td>
 <td align="left">rokasaleks</td>
 <td align="right">25</td>
 <td align="left">Base Graphics</td>
 </tr>
 <tr class="even">
-<td align="left">5834</td>
+<td align="left">5741</td>
 <td align="left">MildaPie</td>
 <td align="right">13</td>
 <td align="left">Base Graphics</td>
 </tr>
 <tr class="odd">
-<td align="left">5885</td>
+<td align="left">5792</td>
 <td align="left">Greta</td>
 <td align="right">15</td>
 <td align="left">Base Graphics</td>
 </tr>
 <tr class="even">
-<td align="left">6211</td>
+<td align="left">6118</td>
 <td align="left">ojautakaite</td>
 <td align="right">5</td>
 <td align="left">Base Graphics</td>
 </tr>
 <tr class="odd">
-<td align="left">6271</td>
+<td align="left">6178</td>
 <td align="left">sindeivydas</td>
 <td align="right">8</td>
 <td align="left">Base Graphics</td>
 </tr>
 <tr class="even">
-<td align="left">6427</td>
+<td align="left">6334</td>
 <td align="left">SandraKozlovskaja</td>
 <td align="right">20</td>
 <td align="left">Base Graphics</td>
 </tr>
 <tr class="odd">
-<td align="left">6760</td>
+<td align="left">6667</td>
 <td align="left">Raigardas</td>
 <td align="right">15</td>
 <td align="left">Base Graphics</td>
 </tr>
-<tr class="even">
-<td align="left">7346</td>
-<td align="left">Dariukxas</td>
-<td align="right">36</td>
-<td align="left">Base Graphics</td>
-</tr>
-<tr class="odd">
-<td align="left">7704</td>
-<td align="left">simonalevickaite</td>
-<td align="right">15</td>
-<td align="left">Base Graphics</td>
-</tr>
-<tr class="even">
-<td align="left">7792</td>
-<td align="left">gyse3054</td>
-<td align="right">4</td>
-<td align="left">Base Graphics</td>
-</tr>
-<tr class="odd">
-<td align="left">7840</td>
-<td align="left">aipe00</td>
-<td align="right">15</td>
-<td align="left">Base Graphics</td>
-</tr>
-<tr class="even">
-<td align="left">13</td>
-<td align="left">gyse</td>
-<td align="right">4</td>
-<td align="left">Basic Building Blocks</td>
-</tr>
-<tr class="odd">
-<td align="left">37</td>
-<td align="left">emru3000</td>
-<td align="right">15</td>
-<td align="left">Basic Building Blocks</td>
-</tr>
-<tr class="even">
-<td align="left">74</td>
-<td align="left">aipe00</td>
-<td align="right">7</td>
-<td align="left">Basic Building Blocks</td>
-</tr>
-<tr class="odd">
-<td align="left">218</td>
-<td align="left">simona1234</td>
-<td align="right">9</td>
-<td align="left">Basic Building Blocks</td>
-</tr>
-<tr class="even">
-<td align="left">439</td>
-<td align="left">SandraKozlovskaja</td>
-<td align="right">10</td>
-<td align="left">Basic Building Blocks</td>
-</tr>
-<tr class="odd">
-<td align="left">511</td>
-<td align="left">MildaPie</td>
-<td align="right">5</td>
-<td align="left">Basic Building Blocks</td>
-</tr>
-<tr class="even">
-<td align="left">608</td>
-<td align="left">sindeivydas</td>
-<td align="right">10</td>
-<td align="left">Basic Building Blocks</td>
-</tr>
-<tr class="odd">
-<td align="left">635</td>
-<td align="left">rokasaleks</td>
-<td align="right">30</td>
-<td align="left">Basic Building Blocks</td>
-</tr>
-<tr class="even">
-<td align="left">659</td>
-<td align="left">ogadova</td>
-<td align="right">20</td>
-<td align="left">Basic Building Blocks</td>
-</tr>
-<tr class="odd">
-<td align="left">715</td>
-<td align="left">zagnyte</td>
-<td align="right">8</td>
-<td align="left">Basic Building Blocks</td>
-</tr>
-<tr class="even">
-<td align="left">2025</td>
-<td align="left">Karolina</td>
-<td align="right">5</td>
-<td align="left">Basic Building Blocks</td>
-</tr>
 </tbody>
 </table>
 <p>Kiek vidutiniskai laiko uztrunka atlikti kiekviena pamoka?</p>
+<pre class="r"><code>pamoka=unique(t3$m.lesson_name)
+  laikas= c(mean(t3[t3$m.lesson_name==&quot;Base Graphics&quot;,2]), mean(t3[t3$m.lesson_name==&quot;Basic Building Blocks&quot;,2]), mean(t3[t3$m.lesson_name==&quot;Dates and Times&quot;,2]), mean(t3[t3$m.lesson_name==&quot;Dummy Lesson&quot;,2]), mean(t3[t3$m.lesson_name==&quot;Functions&quot;,2]), mean(t3[t3$m.lesson_name==&quot;lapply and sapply&quot;,2]), mean(t3[t3$m.lesson_name==&quot;Logic&quot;,2]), mean(t3[t3$m.lesson_name==&quot;Looking at Data&quot;,2]), mean(t3[t3$m.lesson_name==&quot;Matrices and Data Frames&quot;,2]), mean(t3[t3$m.lesson_name==&quot;Missing Values&quot;,2]), mean(t3[t3$m.lesson_name==&quot;Sequences of Numbers&quot;,2]), mean(t3[t3$m.lesson_name==&quot;Simulation&quot;,2]), mean(t3[t3$m.lesson_name==&quot;Subsetting Vectors&quot;,2]), mean(t3[t3$m.lesson_name==&quot;vapply and tapply&quot;,2]), mean(t3[t3$m.lesson_name==&quot;Vectors&quot;,2]), mean(t3[t3$m.lesson_name==&quot;Workspace and Files&quot;,2]))</code></pre>
 <pre class="r"><code>l=data.frame(pamoka, laikas)
 kable(l)</code></pre>
 <table>
@@ -532,18 +460,20 @@ which.max(b[,1])</code></pre>
 <pre class="r"><code>ind=m$user==&quot;zagnyte&quot;
 mano=m[ind, c(3, 9, 13)]</code></pre>
 <p>Tam, kad suskaiciuociau kiek laiko buvo atlikinejama kiekviena uzduotis paleidziu cikla, kuris is paskutinio klausimo atsakymo laiko atima pirmutinio uzduoties klausimo atsakymo laika ir gautas reiksmes is kart surasineja i vektoriu w.</p>
-<pre class="r"><code> x=1
+<pre class="r"><code>    x=1
     y=2
     w=NULL
     w1=0
     while(y&lt;379){
       if((mano[x,2]==mano[y,2]) &amp; (y!=378)){
         y=y+1}
-      else {w1=as.numeric(difftime(mano[y-1,3], mano[x,3], units=&quot;min&quot;))
+      else {
+        w1=as.numeric(difftime(mano[y-1,3], mano[x,3], units=&quot;min&quot;))
         w=c(w, w1)            
         x=y
         y=y+1
-        print(w1)}}</code></pre>
+        print(w1)}
+      }</code></pre>
 <pre><code>## [1] 0.1833333
 ## [1] 135.1833
 ## [1] 60.23333
