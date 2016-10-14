@@ -1,0 +1,40 @@
+---
+title: "Moneta"
+author: "zagnyte"
+date: "7 October 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## MONETA
+
+Tarkime metama moneta. Jeigu iskrenta herbas, tai laimite $12$ EUR. Jeigu skaicius, tai pralosiate $10$ EUR. Bus zaidziama $100$ kartu ir gauti rezultatai sumuojami. Kokia tikimybe jums tureti teigiama balansa po $100$ kartu? Koks balanso pasikliautinis $95%$ intervalas? Kaip atrodo balanso tankis?
+
+Sugeneruojame imtis ir apskaiciuojame tikimybe tureti teigiama balansa po 100 kartu.
+
+```{r}
+n=10^4
+sumos <- replicate(n, sum(sample(c(12, -10), 100, replace = TRUE)))
+teig.bal <- sum((sumos<0)==FALSE)
+prob <- teig.bal/n
+prob
+```
+
+pasikliautinasis 95% intervalas:
+
+```{r}
+vidurkis=mean(sumos)
+conf=qt(0.975,df=n-1)*sd(sumos)/sqrt(n)
+kaire= vidurkis-conf
+desine= vidurkis+conf
+```
+
+Balanso tankis:
+
+```{r}
+plot(density(sumos), col=2)
+```
+
