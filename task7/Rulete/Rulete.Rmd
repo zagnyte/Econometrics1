@@ -15,19 +15,22 @@ library(prob)
 
 Nagrinekime standartine kazino rulete. Kokia tikimybe, kad po $1000$ vienodu statymu ant vienos pasirinktos spalvos, bus teigiamas balansas? Raskite apytiksle $x$ reiksme, kuriai galioja nelygybe $P(balansas<x) = 0.25$.
 
-matome, kad 13 vienos spalvos, 13 kitos spalvos ir 1 zalias.
-palanki spalva traktuojama kaip 1, nepalanki, kaip -1.
+standartineje kazino ruleteje yra, 18 raudonu , 18 juodu ir 1 zalias laukelis.
+Palanki spalva traktuojama kaip 1, nepalanki, kaip -1.
 
+1) Sudarome balansu imti, kai eksperimentas kartojamas 10^4 kartu.
 ```{r}
-probspace(roulette(1), makespace=TRUE)
 n=10^4
-balansai <- replicate(n, sum(sample(c(rep(-1, 14), rep(1, 13)), 1000, replace = TRUE)))
-teig.bal= sum((balansai>0)==TRUE)
-prob=teig.bal/n
+balansai <- replicate(n, sum(sample(c(-1,1), 1000, replace=TRUE, prob=c(19/37, 18/37))))
+```
+
+2) Suskaiciuojame kiek po bandymo turime teigiamu balansu ir randame tikimybe tureti teigiama balansa.
+```{r}
+prob=sum((balansai>0)==TRUE)/n
 prob
 ```
 
-P(balansas<x) = 0.25
+3) P(balansas<x) = 0.25
 
 ```{r}
 x=quantile(balansai, probs=0.25)

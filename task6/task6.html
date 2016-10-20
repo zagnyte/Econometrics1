@@ -165,13 +165,32 @@ x$sysTime &lt;- as.POSIXlt(x$sysTime,&quot;%Y-%m-%d %H:%M:%S&quot;, tz=&quot;GMT
 <p>Pastebime, kad yra vartotoju sukelusiu itarima. Matome, kad “1vbutkus”, “aaa”, “testas” nera studentai. Taip pat pastebime studente “Juste”, kuri naudojo skirtingus vardus (Juste, juste, j, ju). Justes duomenis paliekame, testavimo duomenis istriname:</p>
 <pre class="r"><code>c=x$user %in% c(&quot;1vbutkus&quot;, &quot;aaa&quot;, &quot;testas&quot;)
 m=x[!c,]</code></pre>
-<p>Patikriname duomenis del dubliavimosi ir isimame besidubliuojancius duomenis:</p>
+<p>Pastebime vartotojus (Juste, Gytis, Rokas), kurie pasirasineju skirtingais naudotojo vardais. Suvienodiname vardus:</p>
+<pre class="r"><code>m$user[m$user==&quot;gyse&quot;] &lt;- &quot;gyse3054&quot;
+m$user[m$user==&quot;rokasalek&quot;] &lt;- &quot;rokasaleks&quot;
+m$user[m$user==&quot;Juste&quot; | m$user==&quot;ju&quot; | m$user==&quot;j&quot;] &lt;- &quot;juste&quot;
+table(m$user)</code></pre>
+<pre><code>## 
+##            aipe00         Danielius         Dariukxas Domante Bulovaite 
+##               344                 3               425               387 
+##         Dominykas          edba2903          emru3000             Greta 
+##                 2               280               413               385 
+##          gretajes          gyse3054             juste          Karolina 
+##               321               421               233               409 
+##           kestous          MildaPie           ogadova       ojautakaite 
+##               419               346               424               471 
+##         Raigardas        rokasaleks SandraKozlovskaja        simona1234 
+##               358               398               379               333 
+##  simonalevickaite       sindeivydas           zagnyte 
+##               357               419               378</code></pre>
+<p>Patikriname duomenis del dubliavimosi ir isimame besidubliuojancius duomenis. Atlike pasikartojanciu duomenu naikinima dar karta patikriname ar duomenys nebesidubliuoja:</p>
 <pre class="r"><code>a=data.frame(m$user, m$lesson_name, m$attempt, m$question_number, m$correct, m$skipped)
 table(duplicated(a))</code></pre>
 <pre><code>## 
 ## FALSE  TRUE 
 ##  7747   158</code></pre>
 <pre class="r"><code>m=m[!duplicated(a),]
+
 a=data.frame(m$user, m$lesson_name, m$attempt, m$question_number, m$correct, m$skipped)
 table(duplicated(a))</code></pre>
 <pre><code>## 
@@ -185,21 +204,21 @@ table(duplicated(a))</code></pre>
 <pre><code>## 
 ##         Dariukxas Domante Bulovaite             Greta          gretajes 
 ##                30                11                24                 1 
-##          gyse3054                ju             juste          Karolina 
-##                96                 1                 1                76 
-##           kestous           ogadova       ojautakaite         Raigardas 
-##               269               131                 8                 9 
-##        rokasaleks SandraKozlovskaja  simonalevickaite       sindeivydas 
-##               114                16                 5                18</code></pre>
+##          gyse3054             juste          Karolina           kestous 
+##                96                 2                76               269 
+##           ogadova       ojautakaite         Raigardas        rokasaleks 
+##               131                 8                 9               114 
+## SandraKozlovskaja  simonalevickaite       sindeivydas 
+##                16                 5                18</code></pre>
 <p>Isvalome duomenu lentele nuo nors viena klausima praleidusiu studentu:</p>
-<pre class="r"><code>c=m$user %in% c(&quot;Dariukxas&quot;, &quot;Domante Bulovaite&quot;, &quot;Greta&quot;, &quot;gretajes&quot;, &quot;gyse3054&quot;, &quot;juste&quot;, &quot;Juste&quot;, &quot;Karolina&quot;, &quot;kestous&quot;, &quot;ogadova&quot;, &quot;ojautakaite&quot;,  &quot;Raigardas&quot;, &quot;rokasaleks&quot;, &quot;SandraKozlovskaja&quot;, &quot;simonalevickaite&quot;, &quot;sindeivydas&quot;, &quot;j&quot; , &quot;ju&quot;)
+<pre class="r"><code>c=m$user %in% c(&quot;Dariukxas&quot;, &quot;Domante Bulovaite&quot;, &quot;Greta&quot;, &quot;gretajes&quot;, &quot;gyse3054&quot;, &quot;juste&quot;, &quot;Karolina&quot;, &quot;kestous&quot;, &quot;ogadova&quot;, &quot;ojautakaite&quot;,  &quot;Raigardas&quot;, &quot;rokasaleks&quot;, &quot;SandraKozlovskaja&quot;, &quot;simonalevickaite&quot;, &quot;sindeivydas&quot;)
 table(m[!(c),7])</code></pre>
 <pre><code>## 
-##     aipe00  Danielius  Dominykas   edba2903   emru3000       gyse 
-##        344          3          2        280        413         24 
-##   MildaPie  rokasalek simona1234    zagnyte 
-##        346          2        333        378</code></pre>
-<p>Is karto galime atmesti:Danielius, Dominykas, gyse, rokasalek. Pagal atsakytu klausimu skaiciu matosi, kad visos uzduotis nera atliktos. Sudarome duomenu lentele is likusiu paieskoje studentu (aipe00, edba2903, emru3000, MildaPie, simona333, zagnyte378)</p>
+##     aipe00  Danielius  Dominykas   edba2903   emru3000   MildaPie 
+##        344          3          2        280        413        346 
+## simona1234    zagnyte 
+##        333        378</code></pre>
+<p>Is karto galime atmesti:Danielius, Dominykas. Pagal atsakytu klausimu skaiciu matosi, kad visos uzduotis nera atliktos. Sudarome duomenu lentele is likusiu paieskoje studentu (aipe00, edba2903, emru3000, MildaPie, simona333, zagnyte378)</p>
 <pre class="r"><code>c=m$user %in% c(&quot;aipe00&quot;, &quot;edba2903&quot;, &quot;emru3000&quot;, &quot;MildaPie&quot;, &quot;simona1234&quot;, &quot;zagnyte&quot; )
 n=m[c,]</code></pre>
 <p>Sudarome lentele is vardu ir pamoku ir isimame besidubliuojancius duomenis, tad kad veliau galetume patikrinti ar visas pamokas atliko paieskoje like studentai.</p>
@@ -223,27 +242,25 @@ table(sk2[,1])</code></pre>
 <pre><code>## 
 ##         Danielius         Dariukxas Domante Bulovaite         Dominykas 
 ##                 1                16                16                 1 
-##          edba2903             Greta          gretajes              gyse 
-##                11                16                 9                 2 
-##          gyse3054                 j                ju             juste 
-##                14                 1                 1                 2 
-##             Juste          Karolina           kestous          MildaPie 
-##                 5                16                16                15 
-##           ogadova       ojautakaite         Raigardas         rokasalek 
-##                16                15                16                 1 
-##        rokasaleks SandraKozlovskaja  simonalevickaite       sindeivydas 
-##                15                16                15                16</code></pre>
+##          edba2903             Greta          gretajes          gyse3054 
+##                11                16                 9                16 
+##             juste          Karolina           kestous          MildaPie 
+##                 9                16                16                15 
+##           ogadova       ojautakaite         Raigardas        rokasaleks 
+##                16                15                16                16 
+## SandraKozlovskaja  simonalevickaite       sindeivydas 
+##                16                15                16</code></pre>
 <p>Patikriname kiek kuris studentas praleido klausimu:</p>
 <pre class="r"><code>table(sk[sk$skipped==TRUE,7])</code></pre>
 <pre><code>## 
 ##         Dariukxas Domante Bulovaite             Greta          gretajes 
 ##                30                11                24                 1 
-##          gyse3054                ju             juste          Karolina 
-##                96                 1                 1                76 
-##           kestous           ogadova       ojautakaite         Raigardas 
-##               269               131                 8                 9 
-##        rokasaleks SandraKozlovskaja  simonalevickaite       sindeivydas 
-##               114                16                 5                18</code></pre>
+##          gyse3054             juste          Karolina           kestous 
+##                96                 2                76               269 
+##           ogadova       ojautakaite         Raigardas        rokasaleks 
+##               131                 8                 9               114 
+## SandraKozlovskaja  simonalevickaite       sindeivydas 
+##                16                 5                18</code></pre>
 </div>
 <div id="laikai" class="section level2">
 <h2>Laikai</h2>

@@ -23,6 +23,9 @@ s2 <- replicate(n, sum(sample(1:6, 2, replace=TRUE)))
 ```
 
 Kokia tikimybe laimeti pirmajam zaidejui?
+Suskaiciuojame eksperimento metu uzfiksuotus pirmojo zaidejo laimejimus.
+ismetame atvejus kai zaideju taskai buvo lygus.
+randame tikimybe, kad laimes pirmasis zaidejas.
 
 ```{r}
 s1.laimi= sum((s1>s2)==TRUE)

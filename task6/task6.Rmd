@@ -48,12 +48,21 @@ c=x$user %in% c("1vbutkus", "aaa", "testas")
 m=x[!c,]
 ```
 
-Patikriname duomenis del dubliavimosi ir isimame besidubliuojancius duomenis:
+Pastebime vartotojus (Juste, Gytis, Rokas), kurie pasirasineju skirtingais naudotojo vardais. Suvienodiname vardus:
+
+```{r}
+m$user[m$user=="gyse"] <- "gyse3054"
+m$user[m$user=="rokasalek"] <- "rokasaleks"
+m$user[m$user=="Juste" | m$user=="ju" | m$user=="j"] <- "juste"
+table(m$user)
+```
+Patikriname duomenis del dubliavimosi ir isimame besidubliuojancius duomenis. Atlike pasikartojanciu duomenu naikinima dar karta patikriname ar duomenys nebesidubliuoja:
 
 ```{r echo=TRUE}
 a=data.frame(m$user, m$lesson_name, m$attempt, m$question_number, m$correct, m$skipped)
 table(duplicated(a))
 m=m[!duplicated(a),]
+
 a=data.frame(m$user, m$lesson_name, m$attempt, m$question_number, m$correct, m$skipped)
 table(duplicated(a))
 ```
@@ -70,11 +79,11 @@ table(m[m$skipped==TRUE,7])
 Isvalome duomenu lentele nuo nors viena klausima praleidusiu studentu:
 
 ```{r echo=TRUE}
-c=m$user %in% c("Dariukxas", "Domante Bulovaite", "Greta", "gretajes", "gyse3054", "juste", "Juste", "Karolina", "kestous", "ogadova", "ojautakaite",  "Raigardas", "rokasaleks", "SandraKozlovskaja", "simonalevickaite", "sindeivydas", "j" , "ju")
+c=m$user %in% c("Dariukxas", "Domante Bulovaite", "Greta", "gretajes", "gyse3054", "juste", "Karolina", "kestous", "ogadova", "ojautakaite",  "Raigardas", "rokasaleks", "SandraKozlovskaja", "simonalevickaite", "sindeivydas")
 table(m[!(c),7])
 ```
 
-Is karto galime atmesti:Danielius, Dominykas, gyse, rokasalek. Pagal atsakytu klausimu skaiciu matosi, kad visos uzduotis nera atliktos.
+Is karto galime atmesti:Danielius, Dominykas. Pagal atsakytu klausimu skaiciu matosi, kad visos uzduotis nera atliktos.
 Sudarome duomenu lentele is likusiu paieskoje studentu (aipe00, edba2903, emru3000, MildaPie, simona333, zagnyte378)
 
 ```{r echo=TRUE}
@@ -183,6 +192,7 @@ mano=m[ind, c(3, 9, 13)]
 ```
 
 Tam, kad suskaiciuociau kiek laiko buvo atlikinejama kiekviena uzduotis paleidziu cikla, kuris is paskutinio klausimo atsakymo laiko atima pirmutinio uzduoties klausimo atsakymo laika ir gautas reiksmes is kart surasineja i vektoriu w.
+Veikimo principas: paimame pirmalenteles eilute ir lyginame su sekancia eilute tol, kol nebesutampa pamokos pavadinimas. kai pamokos pavadinimai nesutampa randame datu skirtuma tarp pirmo klausimo atsakymo laiko ir paskutinio tos pamokos klausimo atsakymo laiko. ir taip su kiekviena pamoka.
 
 ```{r echo=TRUE}
     x=1
