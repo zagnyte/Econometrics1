@@ -24,6 +24,9 @@ head(S, 15)
 Aukščiau pateikta 15 pirmų atsitiktinio dydžio S realizacijų.
 
 2. Raskite teorinį S skirstinį, t.y. kiekvienai galimai S reikšmei raskite pasirodymo tikimybę.
+ i) randame visas eksperimento (3 kauliuku ridenimas) baigtis ir ju tikimybes
+ ii) prijungiame stulpeli su sumomis
+ iii) randame teorines sumu tikimybes
 
 ```{r}
 St <- rolldie(3, nsides = 6, makespace = TRUE)
@@ -69,6 +72,8 @@ varS
 plot(cumsum(S)/1:n, type="l", xlab="n", ylab = "S / n", main="Vidurkio artėjimas į teorinį")
 abline(h=ES, col=2)
 
+
+#empirinei dispersijai skaiciuoti imame kas 10-ta taska, kad trumpiau uztruktu skaiciavimai
 a = rep(0, n/10)
 for(i in 1:10000){
   a[i]=var(S[1:(i*10)])
