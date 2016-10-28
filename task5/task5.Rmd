@@ -24,9 +24,9 @@ head(S, 15)
 Aukščiau pateikta 15 pirmų atsitiktinio dydžio S realizacijų.
 
 2. Raskite teorinį S skirstinį, t.y. kiekvienai galimai S reikšmei raskite pasirodymo tikimybę.
- i) randame visas eksperimento (3 kauliuku ridenimas) baigtis ir ju tikimybes
+[ i) randame visas eksperimento (3 kauliuku ridenimas) baigtis ir ju tikimybes
  ii) prijungiame stulpeli su sumomis
- iii) randame teorines sumu tikimybes
+ iii) randame teorines sumu tikimybes ]
 
 ```{r}
 St <- rolldie(3, nsides = 6, makespace = TRUE)
