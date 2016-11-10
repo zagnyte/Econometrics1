@@ -1,0 +1,69 @@
+---
+title: "task11"
+author: "zagnyte"
+date: "4 November 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Task 11
+
+**Pakete datasets yra duomenų masyvas longley. Iš šio kintamųjų padarykite tiesinę regresiją, kur prognozuojamas kintamasis būtų GNP, o regresosius Employed. Jums reikia:**
+
+**1. Įvertinti paprastosios tiesinės regresijos modelį. Pateikti modelio summary ir pakomentuoti ką reiškia gauti skaičiai. Kaip interpretuoti gautus rezultatus?**
+
+```{r}
+x=longley$Employed
+y=longley$GNP
+plot(x, y)
+mod=lm(y~x)
+summary(mod)
+```
+Funkcijos summary išvestyje esančių skaičių paaiškinimas:
+
+Skiltyje **Residuals** išraryta kaip pasiskirstę paklaidos (minimumas, 1Q, mediana, 3Q, makimumas). Norima, kad jos būtų pasiskirstę pagal normalųjį skirstinį.
+
+Skiltyje **Coefficient** duomenys, apie parametrus, kuriuos vertinome.
+
+**Estimate** (The estimated coefficient is the value of slope calculated by the regression.) Įvertinimas iš tiesinės regresijos lygties y = b0 + b1*x + c
+b0 įvertintas -1430.482
+b1 įvertintas 27.836 
+
+**Std. Error** (Measure of the variability in the estimate for the coefficient. Lower means better but this number is relative to the value of the coefficient. As a rule of thumb, you'd like this value to be at least an order of magnitude less than the coefficient estimate.) b0 ir b1 standartinės paklaidos: 89.361, 1.366
+
+**t value** (You probably won't use this value itself, but know that it is used to calculate the p-value and the significance levels.) Stjudento testo t reikšmė.
+
+**Pr(>|t|)** (You want this number to be as small as possible) pagal šį parametrą tikriname, ar modelis gerai aprašo pradinius duomenis.
+
+**Signif. codes** The more punctuation there is next to your variables, the better. (šiuo atveju *** labai gerai)
+
+**Residual standard error** (The Residual Std Error is just the standard deviation of your residuals. You'd like this number to be proportional to the quantiles of the residuals. For a normal distribution, the 1st and 3rd quantiles should be 1.5 +/- the std error) paklaidų standartinė paklaida yra 18,58 su laisvės laipsniu lygiu 14.
+
+**Multiple R-squared** modelio tinkamumo matas, kuo jis didesnis, tuo geresnis modelis. Didinant "Multiple R-squared" mažėja **Adjusted R-squared**.
+
+**F-statistic** (Performs an F-test on the model. This takes the parameters of our model and compares it to a model that has fewer parameters. In theory the model with more parameters should fit better. If the model with more parameters doesn't perform better than the model with fewer parameters, the F-test will have a high p-value. If the model with more parameters is better than the model with fewer parameters, you will have a lower p-value.) Fišerio statistika yra 415,1 su laisvės laipsniais 1 ir 14. **p-value: 8.363e-12** p reikšmė.
+```{r}
+hist(mod$residuals)
+```
+
+**2. Padarykite modelio prognozes taškuose $62, 65, 68$.**
+
+```{r}
+newx=c(62, 65, 68)
+newy = predict(mod, newdata=data.frame(x=newx))
+newy
+```
+
+**3. Išbrėžkite kintamųjų sklaidos diagramą kartu su tiesinės regresijos tiese ir naujomis prognozėmis. Grafiką pateikite su pilna legena, kurioje būtų nurodyti visi žymėjimai.**
+
+```{r}
+plot(x,y)
+abline(mod, col=2)
+points(newx, newy, col=3, pch=19)
+legend(60,550, c("Kintamuju sklaidos diagrama","tiesines regresijos tiese", "naujos prognozes"),pch=c(1, NA, 19), lty=c(0,1,0) ,col=c("black", "red", "green"), text.width=4)
+
+
+```
