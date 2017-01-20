@@ -1,0 +1,65 @@
+---
+title: "Uzduotis3"
+author: "Agnė Zavackaitė"
+date: "20 January 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Uzduotis3
+
+Faile ‘data_a.csv’ yra pateikti duomenys reikalingi tiesinės regresijos tyrimui. Duomenų masyvo aprašymas pateiktas minėto failo pradžioje.
+
+Duomenų apžvalga ir paruošimas. Šioje dalyje jums reikia susipažinti su duomenimis ir paruošti duomenis tolimesnei analizei.
+Nuskaitykite duomenų masyvą. Jeigu įmanoma, nekoreguokite originalaus failo.
+
+```{r}
+data=read.table('C:/Users/agne/Desktop/data.csv',sep = ";", skip= 8, stringsAsFactors=FALSE)
+```
+
+Paruoškite duomenis naudojimui. Jūs turite užtikrinti, kad:
+
+Neliko įrašų su trūkstamomis reikšmėmis - jeigu šalinote įrašus, tai būtinai raportuokite kiek įrašų pašalinta ir kiek liko.
+
+Duomenų masyve nėra kažkokių klaidų (pvz. negalimos reikšmės, neteisingas duomenų tipas, t.t.). Patartina patikrinti visų duomenų tipus, nes kartais nuskaitymo procedūra suinterpretuoja duoenis ne taip kaip tikimasi.
+
+```{r}
+dim(data)
+a=which(data[,1]=="MISSING")
+b=which(data[,2]=="MISSING")
+c=which(data[,3]=="MISSING")
+d=which(data[,4]=="MISSING")
+e=which(data[,5]=="MISSING")
+mis= c(a, b, c, d, e)
+mis #eilutes, kurias ismesime
+data1= data[-mis,]
+
+colnames(data1) = c("kaina", "rida", "amzius", "galia", "markesKodas")
+sapply(data1, class)
+data1$kaina <- as.numeric(data1$kaina)
+data1$amzius <- as.numeric(data1$amzius)
+sapply(data1, class)
+
+```
+
+Pateikite trumpą kintamųjų apžvalgą. Naudokite tik tuos duomenis (ir kintamuosius), kuriuos planuojate taikyti tyrimui, t.y. jei reikėjo ką nors modifikuoti, tai senųjų reikšmių naudoti nebereikia. Šiai apžvalgai užtenka informacijos, kurią pateikia funkcijos plot, summary ir  cor.
+
+```{r}
+
+
+```
+
+Duomenų masyvą suskaidykite į du atskirus ir nesikertančius masyvus. Didesnį masyvą turi sudaryti apie 80 proc. turimų stebėjimų. Šį masyvą vadinsime trainSet. Mažesnį masyvą turi sudaryti likę įrašai. Šį masyvą vadinsime testSet. Duomenų suskaidymas turi būti atsitiktinis. Gali būti naudingos šios funkcijos:sample, setdiff, %in%.
+
+```{r}
+dim(data1)
+n=round(347*.8) #kiek bus panasiai 80% duomenu
+m=sample(1:347, n)#atsitiktiniai eiluciu numeriai
+data1a=data1[m,] #80% masyvas
+data1b=data1[-m,] #20% masyvas
+
+
+```

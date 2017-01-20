@@ -1,0 +1,46 @@
+---
+title: "Uzduotis1"
+author: "Agnė Zavackaitė"
+date: "20 January 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Užduotis 1
+
+Sugeneruokite x su pateiktu R kodu.
+
+```{r}
+set.seed(1234567890)
+x <- rnorm(5000)
+```
+
+Suraskite x vidukio ir standartinio nuokrypio įverčius.
+
+```{r}
+Ex <- mean(x)
+varx <- sd(x)
+Ex
+varx
+```
+
+Raskite x išskirtis. Šioje užduotyje, išskirtimis laikome reikšmes, kurios nepakliūna į intervalą
+[X¯−3sd^;X¯+3sd^].
+Čia X¯X¯ ir sd^sd^ atitinkamai žymi vidukio ir standartinio nuokrypio įverčius. Atsakymui pateikite ir reikšmes, ir atitinkamus reikšmių indeksus.
+
+```{r}
+ind <- which( x < (Ex-(3*varx)) | x >  (Ex+(3*varx)))
+ind
+x[ind]
+
+```
+
+Pašalinkite rastas išskirtis iš x vektorius ir nubrėžkite atnaujinto x histogramą.
+
+```{r}
+x2 <- x[-ind]
+hist(x2, main = "Atnaujinto x histograma", xlab= "atnaujintas x", ylab="daznis")
+```

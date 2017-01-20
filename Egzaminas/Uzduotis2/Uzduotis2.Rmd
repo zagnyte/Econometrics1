@@ -1,0 +1,74 @@
+---
+title: "Uzduotis2"
+author: "Agnė Zavackaitė"
+date: "20 January 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(ecodist)
+```
+## Uzduotis2
+
+#####Tarkime X1 ir X2 yra nepriklausomi, X1∼N(3,2), X2∼N(−1,3) ir X=X1+X2
+
+Raskite X teorinį skirstinį. Išbrėžkite tankio grafiką. Pastaba: labai naudinga savybė, kad dviejų natūraliųjų dydžių suma taip pat yra natūralusis dydis.
+
+savybė: X ~ N(3+(-1), 2+3)
+        X ~ N(2, 5)
+
+```{r}
+a <- seq(-20, 20, 0.5)
+plot(a, dnorm(a, 2, 3.6))
+
+```
+
+Sugeneruokite X imtį (N=10000) pagal pateiktą X apibrėžimą.
+
+```{r}
+n=10000
+x1 = rnorm(n, 3, 2)
+x2 = rnorm(n, -1, 3)
+cor(x1, x2)
+##cor=0
+##x1x2 = corgen(n, cor, epsilon = 0.1)
+##x2 = x1x2$y
+x = x1+x2
+```
+
+Palyginkite sugeneruotą XX empirinį skirstinį su teorinį skirstiniu.
+Palyginimui pateikite tankių grafikus ir skirstinių charakteristikas (vidurkį, medianą ir standartinį nuokrypį).
+
+```{r}
+plot(a, dnorm(a, 2, 3.6), ylab="daznis", xlab="a/x", type= "l")
+lines(density(x), col=2)
+legend(-20, 0.09, c("Teorinis skirstinys", "Empirinis skirstinys"), lty=c(1,1) ,col=c("black", "red"), text.width=12)
+
+mean(x)
+median(x)
+sd(x)
+```
+
+Raskite teorinę įvykio |X|>2|X|>2 tikimybę (konkreti neatsitikinė konstanta).
+
+```{r}
+pnorm(2, mean=2, sd=3.6, lower.tail=FALSE) 
+
+```
+
+Įvertinkite įvykio |X|>2|X|>2 tikimybę naudojantis Monte-Carlo metodu.
+
+```{r}
+plot(table((cumsum(x)/1:n)>2)[1], type="l", xlab="n", ylab = "S / n", main="Vidurkio artėjimas į teorinį")
+abline(h=0.5, col=2)
+
+
+
+
+
+
+```
